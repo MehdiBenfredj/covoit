@@ -12,17 +12,17 @@ type Service interface {
 	DeleteUser(userID uuid.UUID) bool
 	UpdateUser(user User) User
 
-	GetAllRides() []Ride
-	GetRideById(rideID uuid.UUID) Ride
-	CreateRide(ride Ride) bool
-	DeleteRide(rideID uuid.UUID) bool
-	UpdateRide(ride Ride) Ride
+	GetAllRides() ([]Ride, error)
+	GetRideById(rideID uuid.UUID) (Ride, error)
+	CreateRide(ride Ride) (Ride, error)
+	DeleteRide(rideID uuid.UUID) error
+	UpdateRide(ride Ride) (Ride, error)
 
-	GetAllBookings() []Booking
-	GetBookingById(bookingID uuid.UUID) Booking
-	CreateBooking(booking Booking) bool
-	DeleteBooking(bookingID uuid.UUID) bool
-	UpdateBooking(booking Booking) Booking
+	GetAllBookings() ([]Booking, error)
+	GetBookingById(bookingID uuid.UUID) (Booking, error)
+	CreateBooking(booking Booking) (Booking, error)
+	DeleteBooking(bookingID uuid.UUID) error
+	UpdateBooking(booking Booking) (Booking, error)
 }
 
 type CovoitService struct {
@@ -47,33 +47,33 @@ func (service *CovoitService) DeleteUser(userID uuid.UUID) bool {
 func (service *CovoitService) UpdateUser(user User) User {
 	return service.repository.UpdateUser(user)
 }
-func (service *CovoitService) GetAllRides() []Ride {
+func (service *CovoitService) GetAllRides() ([]Ride, error) {
 	return service.repository.GetAllRides()
 }
-func (service *CovoitService) GetRideById(rideID uuid.UUID) Ride {
+func (service *CovoitService) GetRideById(rideID uuid.UUID) (Ride, error) {
 	return service.repository.GetRideById(rideID)
 }
-func (service *CovoitService) CreateRide(ride Ride) bool {
+func (service *CovoitService) CreateRide(ride Ride) (Ride, error) {
 	return service.repository.CreateRide(ride)
 }
-func (service *CovoitService) DeleteRide(rideID uuid.UUID) bool {
+func (service *CovoitService) DeleteRide(rideID uuid.UUID) error {
 	return service.repository.DeleteRide(rideID)
 }
-func (service *CovoitService) UpdateRide(ride Ride) Ride {
+func (service *CovoitService) UpdateRide(ride Ride) (Ride, error) {
 	return service.repository.UpdateRide(ride)
 }
-func (service *CovoitService) GetAllBookings() []Booking {
+func (service *CovoitService) GetAllBookings() ([]Booking, error) {
 	return service.repository.GetAllBookings()
 }
-func (service *CovoitService) GetBookingById(bookingID uuid.UUID) Booking {
+func (service *CovoitService) GetBookingById(bookingID uuid.UUID) (Booking, error) {
 	return service.repository.GetBookingById(bookingID)
 }
-func (service *CovoitService) CreateBooking(booking Booking) bool {
+func (service *CovoitService) CreateBooking(booking Booking) (Booking, error) {
 	return service.repository.CreateBooking(booking)
 }
-func (service *CovoitService) DeleteBooking(bookingID uuid.UUID) bool {
+func (service *CovoitService) DeleteBooking(bookingID uuid.UUID) error {
 	return service.repository.DeleteBooking(bookingID)
 }
-func (service *CovoitService) UpdateBooking(booking Booking) Booking {
+func (service *CovoitService) UpdateBooking(booking Booking) (Booking, error) {
 	return service.repository.UpdateBooking(booking)
 }

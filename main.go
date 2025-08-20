@@ -59,10 +59,8 @@ func (h *Handler) UsersHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			done := h.Service.CreateNewUser(newUser)
 			if !done {
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
+				w.WriteHeader(http.StatusInternalServerError)
+				return
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
@@ -93,7 +91,10 @@ func (h *Handler) RidesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		{
-			rides := h.Service.GetAllRides()
+			rides, err := h.Service.GetAllRides()
+			if err != nil {
+				w.WriteHeader(http.StatusNotFound)
+			}
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(rides)
 			w.WriteHeader(http.StatusOK)
@@ -106,12 +107,12 @@ func (h *Handler) RidesHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 			}
-			done := h.Service.CreateRide(newRide)
-			if !done {
+			ride, err := h.Service.CreateRide(newRide)
+			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(newRide)
+			json.NewEncoder(w).Encode(ride)
 			w.WriteHeader(http.StatusCreated)
 		}
 	case http.MethodPatch:
@@ -125,8 +126,8 @@ func (h *Handler) RidesHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 			}
-			done := h.Service.DeleteBooking(rodeID)
-			if !done {
+			err = h.Service.DeleteBooking(rodeID)
+			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 			w.WriteHeader(http.StatusNoContent)
@@ -138,7 +139,10 @@ func (h *Handler) BookingsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		{
-			bookings := h.Service.GetAllBookings()
+			bookings, err := h.Service.GetAllBookings()
+			if err != nil {
+				w.WriteHeader(http.StatusNotFound)
+			}
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(bookings)
 			w.WriteHeader(http.StatusOK)
@@ -150,13 +154,15 @@ func (h *Handler) BookingsHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 			}
-			done := h.Service.CreateBooking(newBooking)
-			if !done {
+			booking, err := h.Service.CreateBooking(newBooking)
+			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+				return
+			} else {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(booking)
+				w.WriteHeader(http.StatusCreated)
 			}
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(newBooking)
-			w.WriteHeader(http.StatusCreated)
 		}
 	case http.MethodPatch:
 		{
@@ -169,8 +175,8 @@ func (h *Handler) BookingsHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 			}
-			done := h.Service.DeleteBooking(bookingID)
-			if !done {
+			err = h.Service.DeleteBooking(bookingID)
+			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 			w.WriteHeader(http.StatusNoContent)

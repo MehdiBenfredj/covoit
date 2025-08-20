@@ -20,17 +20,17 @@ type Repository interface {
 	DeleteUser(userID uuid.UUID) bool
 	UpdateUser(user User) User
 
-	GetAllRides() []Ride
-	GetRideById(rideID uuid.UUID) Ride
-	CreateRide(ride Ride) bool
-	DeleteRide(rideID uuid.UUID) bool
-	UpdateRide(ride Ride) Ride
+	GetAllRides() ([]Ride, error)
+	GetRideById(rideID uuid.UUID) (Ride, error)
+	CreateRide(ride Ride) (Ride, error)
+	DeleteRide(rideID uuid.UUID) error
+	UpdateRide(ride Ride) (Ride, error)
 
-	GetAllBookings() []Booking
-	GetBookingById(bookingID uuid.UUID) Booking
-	CreateBooking(booking Booking) bool
-	DeleteBooking(bookingID uuid.UUID) bool
-	UpdateBooking(booking Booking) Booking
+	GetAllBookings() ([]Booking, error)
+	GetBookingById(bookingID uuid.UUID) (Booking, error)
+	CreateBooking(booking Booking) (Booking, error)
+	DeleteBooking(bookingID uuid.UUID) error
+	UpdateBooking(booking Booking) (Booking, error)
 }
 
 type CovoitRepository struct {
@@ -75,7 +75,7 @@ func (repository *CovoitRepository) GetUserById(userID uuid.UUID) User {
 	// Using numeric primary key
 	user, err := gorm.G[User](repository.db).Where("user_id = ?", userID).First(ctx)
 	if err != nil {
-		fmt.Errorf("Could not find user: %s", err.Error())
+		fmt.Errorf("could not find user: %s", err)
 	}
 	return user
 }
@@ -88,28 +88,25 @@ func (repository *CovoitRepository) DeleteUser(userID uuid.UUID) bool {
 
 	_, err := gorm.G[User](repository.db).Where("user_id = ?", userID).Delete(ctx)
 	if err != nil {
-		fmt.Errorf("Could not delete user: %s", err.Error())
+		fmt.Errorf("could not delete user: %s", err)
 	}
-	return err != nil
+	return err == nil
 }
-func (repository *CovoitRepository) UpdateUser(userToUpdate User) User {
-	user := User{}
-	repository.db.First(&user)
 
-	user.FirstName = userToUpdate.FirstName
-	repository.db.Save(&user)
+// TODO
+func (repository *CovoitRepository) UpdateUser(user User) User {
 	return user
 }
-func (repository *CovoitRepository) GetAllRides() []Ride {
+func (repository *CovoitRepository) GetAllRides() ([]Ride, error) {
 	rides := []Ride{}
 	repository.db.Find(&rides)
-	return rides
+	return rides, nil
 }
 func (repository *CovoitRepository) GetRideById(rideID uuid.UUID) (Ride, error) {
 	ctx := context.Background()
 	ride, err := gorm.G[Ride](repository.db).Where("ride_id", rideID).First(ctx)
 	if err != nil {
-		return Ride{}, fmt.Errorf("Ride %s not found ", rideID, err)
+		return Ride{}, fmt.Errorf("Ride %v not found, err : %s", rideID, err)
 	}
 	return ride, nil
 }
@@ -117,7 +114,7 @@ func (repository *CovoitRepository) CreateRide(ride Ride) (Ride, error) {
 	ctx := context.Background()
 	err := gorm.G[Ride](repository.db).Create(ctx, &ride)
 	if err != nil {
-		return Ride{}, fmt.Errorf("Could not create ride %s", ride)
+		return Ride{}, fmt.Errorf("could not create ride, err : %s", err)
 	}
 	return ride, nil
 }
@@ -126,14 +123,14 @@ func (repository *CovoitRepository) DeleteRide(rideID uuid.UUID) error {
 	_, err := gorm.G[Ride](repository.db).Where("ride_id = ?", rideID).Delete(ctx)
 	return err
 }
-func (repository *CovoitRepository) UpdateRide(ride Ride) Ride {
-	return Ride{}
+func (repository *CovoitRepository) UpdateRide(ride Ride) (Ride, error) {
+	return Ride{}, nil
 }
 func (repository *CovoitRepository) GetAllBookings() ([]Booking, error) {
 	ctx := context.Background()
 	bookings, err := gorm.G[Booking](repository.db).Find(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("Could not get bookings", err)
+		return nil, fmt.Errorf("could not get bookings, err : %s", err)
 	}
 	return bookings, nil
 }
@@ -149,7 +146,7 @@ func (repository *CovoitRepository) CreateBooking(booking Booking) (Booking, err
 	ctx := context.Background()
 	err := gorm.G[Booking](repository.db).Create(ctx, &booking)
 	if err != nil {
-		return Booking{}, fmt.Errorf("Could not create booking %s", booking, err)
+		return Booking{}, fmt.Errorf("could not create booking %v, err : %s", booking, err)
 	}
 	return booking, err
 }
@@ -157,10 +154,10 @@ func (repository *CovoitRepository) DeleteBooking(bookingID uuid.UUID) error {
 	ctx := context.Background()
 	_, err := gorm.G[Booking](repository.db).Where("booking_id = ?", bookingID).Delete(ctx)
 	if err != nil {
-		return fmt.Errorf("Could not delete booking %s", bookingID, err)
+		return fmt.Errorf("could not delete booking %s, err : %s", bookingID, err)
 	}
 	return nil
 }
-func (repository *CovoitRepository) UpdateBooking(booking Booking) Booking {
-	return Booking{}
+func (repository *CovoitRepository) UpdateBooking(booking Booking) (Booking, error) {
+	return Booking{}, nil
 }
