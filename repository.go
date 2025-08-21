@@ -148,7 +148,7 @@ func (repository *CovoitRepository) GetBookingById(bookingID uuid.UUID) (Booking
 	ctx := context.Background()
 	booking, err := gorm.G[Booking](repository.db).Where("booking_id = ?", bookingID).First(ctx)
 	if err != nil {
-		return Booking{}, nil
+		return Booking{}, fmt.Errorf("Booking %v not found, err : %s", bookingID, err)
 	}
 	return booking, nil
 }
