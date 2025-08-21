@@ -26,27 +26,38 @@ func (h *Handler) UsersHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		{
 			if email := r.URL.Query().Get("email"); email != "" {
-				user := h.Service.GetUserByEmail(email)
-				w.Header().Set("Content-Type", "application/json")
-				json.NewEncoder(w).Encode(user)
-				w.WriteHeader(http.StatusOK)
+				user, err := h.Service.GetUserByEmail(email)
+				if err != nil {
+					w.WriteHeader(http.StatusNotFound)
+				} else {
+					w.Header().Set("Content-Type", "application/json")
+					json.NewEncoder(w).Encode(user)
+					w.WriteHeader(http.StatusOK)
+				}
+
 				return
 			} else if idStr := r.URL.Query().Get("user_id"); idStr != "" {
 				userID, err := uuid.Parse(idStr)
 				if err != nil {
 					w.WriteHeader(http.StatusBadRequest)
 				}
-				user := h.Service.GetUserById(userID)
-				w.Header().Set("Content-Type", "application/json")
-				json.NewEncoder(w).Encode(user)
-				w.WriteHeader(http.StatusOK)
-				return
+				user, err := h.Service.GetUserById(userID)
+				if err != nil {
+					w.WriteHeader(http.StatusNotFound)
+				} else {
+					w.Header().Set("Content-Type", "application/json")
+					json.NewEncoder(w).Encode(user)
+					w.WriteHeader(http.StatusOK)
+				}
 			}
-			users := h.Service.GetAllUsers()
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(users)
-			w.WriteHeader(http.StatusOK)
-
+			users, err := h.Service.GetAllUsers()
+			if err != nil {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(users)
+				w.WriteHeader(http.StatusOK)
+			}
 		}
 
 	case http.MethodPost:
@@ -57,14 +68,14 @@ func (h *Handler) UsersHandler(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			done := h.Service.CreateNewUser(newUser)
-			if !done {
+			user, err := h.Service.CreateNewUser(newUser)
+			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				return
+			} else {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(user)
+				w.WriteHeader(http.StatusOK)
 			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusCreated)
-			json.NewEncoder(w).Encode(newUser)
 		}
 	case http.MethodPatch:
 		{
@@ -77,14 +88,14 @@ func (h *Handler) UsersHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 			}
-			done := h.Service.DeleteUser(userID)
-			if !done {
+			err = h.Service.DeleteUser(userID)
+			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+			} else {
+				w.WriteHeader(http.StatusNoContent)
 			}
-			w.WriteHeader(http.StatusNoContent)
 		}
 	}
-
 }
 
 func (h *Handler) RidesHandler(w http.ResponseWriter, r *http.Request) {

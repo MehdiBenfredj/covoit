@@ -13,12 +13,12 @@ import (
 )
 
 type Repository interface {
-	GetAllUsers() []User
-	GetUserByEmail(email string) User
-	GetUserById(userID uuid.UUID) User
-	CreateNewUser(user User) bool
-	DeleteUser(userID uuid.UUID) bool
-	UpdateUser(user User) User
+	GetAllUsers() ([]User, error)
+	GetUserByEmail(email string) (User, error)
+	GetUserById(userID uuid.UUID) (User, error)
+	CreateNewUser(user User) (User, error)
+	DeleteUser(userID uuid.UUID) error
+	UpdateUser(user User) (User, error)
 
 	GetAllRides() ([]Ride, error)
 	GetRideById(rideID uuid.UUID) (Ride, error)
@@ -57,46 +57,56 @@ func NewCovoitRepository() *CovoitRepository {
 	return &CovoitRepository{db: db}
 }
 
-func (repository *CovoitRepository) GetAllUsers() []User {
-	users := []User{}
-	repository.db.Find(&users)
-	return users
-}
-func (repository *CovoitRepository) GetUserByEmail(email string) User {
-	user := User{}
-	// Get first matched record
-	repository.db.Where("email = ?", email).First(&user)
-
-	return user
-}
-func (repository *CovoitRepository) GetUserById(userID uuid.UUID) User {
+func (repository *CovoitRepository) GetAllUsers() ([]User, error) {
 	ctx := context.Background()
+	users, err := gorm.G[User](repository.db).Find(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("could not retrieve users, err : %s", err)
+	}
+	return users, nil
+}
 
-	// Using numeric primary key
+func (repository *CovoitRepository) GetUserByEmail(email string) (User, error) {
+	ctx := context.Background()
+	user, err := gorm.G[User](repository.db).Where("email = ?", email).First(ctx)
+	if err != nil {
+		return User{}, fmt.Errorf("could not retrieve user with email %s, err : %s", email, err)
+	}
+	return user, nil
+}
+
+func (repository *CovoitRepository) GetUserById(userID uuid.UUID) (User, error) {
+	ctx := context.Background()
 	user, err := gorm.G[User](repository.db).Where("user_id = ?", userID).First(ctx)
 	if err != nil {
-		fmt.Errorf("could not find user: %s", err)
+		return User{}, fmt.Errorf("could not retrieve user with id %s, err : %s", userID, err)
 	}
-	return user
+	return user, nil
 }
-func (repository *CovoitRepository) CreateNewUser(user User) bool {
-	result := repository.db.Create(&user)
-	return result.Error == nil
+func (repository *CovoitRepository) CreateNewUser(user User) (User, error) {
+	ctx := context.Background()
+	err := gorm.G[User](repository.db).Create(ctx, &user)
+	if err != nil {
+		return User{}, fmt.Errorf("could not create user %v, err : %s", user, err)
+	}
+	return user, nil
 }
-func (repository *CovoitRepository) DeleteUser(userID uuid.UUID) bool {
+
+func (repository *CovoitRepository) DeleteUser(userID uuid.UUID) error {
 	ctx := context.Background()
 
 	_, err := gorm.G[User](repository.db).Where("user_id = ?", userID).Delete(ctx)
 	if err != nil {
-		fmt.Errorf("could not delete user: %s", err)
+		return fmt.Errorf("could not delete user %s, err : %s", userID, err)
 	}
-	return err == nil
+	return nil
 }
 
 // TODO
-func (repository *CovoitRepository) UpdateUser(user User) User {
-	return user
+func (repository *CovoitRepository) UpdateUser(user User) (User, error) {
+	return user, nil
 }
+
 func (repository *CovoitRepository) GetAllRides() ([]Ride, error) {
 	rides := []Ride{}
 	repository.db.Find(&rides)

@@ -5,12 +5,12 @@ import (
 )
 
 type Service interface {
-	GetAllUsers() []User
-	GetUserByEmail(email string) User
-	GetUserById(userID uuid.UUID) User
-	CreateNewUser(user User) bool
-	DeleteUser(userID uuid.UUID) bool
-	UpdateUser(user User) User
+	GetAllUsers() ([]User, error)
+	GetUserByEmail(email string) (User, error)
+	GetUserById(userID uuid.UUID) (User, error)
+	CreateNewUser(user User) (User, error)
+	DeleteUser(userID uuid.UUID) error
+	UpdateUser(user User) (User, error)
 
 	GetAllRides() ([]Ride, error)
 	GetRideById(rideID uuid.UUID) (Ride, error)
@@ -29,22 +29,22 @@ type CovoitService struct {
 	repository Repository
 }
 
-func (service *CovoitService) GetAllUsers() []User {
+func (service *CovoitService) GetAllUsers() ([]User, error) {
 	return service.repository.GetAllUsers()
 }
-func (service *CovoitService) GetUserByEmail(email string) User {
+func (service *CovoitService) GetUserByEmail(email string) (User, error) {
 	return service.repository.GetUserByEmail(email)
 }
-func (service *CovoitService) GetUserById(userID uuid.UUID) User {
+func (service *CovoitService) GetUserById(userID uuid.UUID) (User, error) {
 	return service.repository.GetUserById(userID)
 }
-func (service *CovoitService) CreateNewUser(user User) bool {
+func (service *CovoitService) CreateNewUser(user User) (User, error) {
 	return service.repository.CreateNewUser(user)
 }
-func (service *CovoitService) DeleteUser(userID uuid.UUID) bool {
+func (service *CovoitService) DeleteUser(userID uuid.UUID) error {
 	return service.repository.DeleteUser(userID)
 }
-func (service *CovoitService) UpdateUser(user User) User {
+func (service *CovoitService) UpdateUser(user User) (User, error) {
 	return service.repository.UpdateUser(user)
 }
 func (service *CovoitService) GetAllRides() ([]Ride, error) {
