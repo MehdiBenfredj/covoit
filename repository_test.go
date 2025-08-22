@@ -166,7 +166,7 @@ func TestRideRepo(t *testing.T) {
 			t.Errorf("could not delete the ride")
 		}
 
-		got, err = repository.GetRideById(want.RideID)
+		got, err = repository.GetRideById(got.RideID)
 		if err == nil || got.Origin == want.Origin {
 			t.Errorf("ride still in db, probably not deleted, err : %s", err)
 		}
