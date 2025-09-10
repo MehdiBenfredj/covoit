@@ -241,7 +241,7 @@ func TestUsersHandler_Delete(t *testing.T) {
 func TestRidesHandler_Get(t *testing.T) {
 	mockSvc := new(MockService)
 	h := &Handler{Service: mockSvc}
-	rides := []Ride{{RideID: StringToUuid(t, "f71533c2-874a-459e-806e-ae2200351c84")}}
+	rides := []Ride{{RideID: uuid.New()}}
 	mockSvc.On("GetAllRides").Return(rides, nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/rides", nil)
@@ -262,7 +262,7 @@ func TestRidesHandler_Get(t *testing.T) {
 func TestRidesHandler_Post(t *testing.T) {
 	mockSvc := new(MockService)
 	h := &Handler{Service: mockSvc}
-	ride := Ride{RideID: StringToUuid(t, "f71533c2-874a-459e-806e-ae2200351c84")}
+	ride := Ride{RideID: uuid.New()}
 	mockSvc.On("CreateRide", ride).Return(ride, nil)
 
 	body, _ := json.Marshal(ride)
@@ -319,7 +319,7 @@ func TestRidesHandler_Delete(t *testing.T) {
 func TestBookingsHandler_Get(t *testing.T) {
 	mockSvc := new(MockService)
 	h := &Handler{Service: mockSvc}
-	bookings := []Booking{{BookingID: StringToUuid(t, "5a0977da-ac5d-4daf-8b91-4bfcf8e9866a")}}
+	bookings := []Booking{{BookingID: uuid.New()}}
 	mockSvc.On("GetAllBookings").Return(bookings, nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/bookings", nil)
