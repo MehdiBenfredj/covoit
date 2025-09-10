@@ -118,7 +118,7 @@ func TestRideRepo(t *testing.T) {
 			Origin:      "Constantine",
 			Destination: "Alger",
 		}
-		rideID := stringToUuid(t, "f71533c2-874a-459e-806e-ae2200351c84")
+		rideID := StringToUuid(t, "f71533c2-874a-459e-806e-ae2200351c84")
 		got, err := repository.GetRideById(rideID)
 		if err != nil {
 			t.Errorf("Could get ride with id : %v", rideID)
@@ -188,10 +188,10 @@ func TestBookingRepo(t *testing.T) {
 
 	t.Run("Test get booking by id", func(t *testing.T) {
 		want := Booking{
-			RideID: stringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
-			UserID: stringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
+			RideID: StringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
+			UserID: StringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
 		}
-		bookingID := stringToUuid(t, "5a0977da-ac5d-4daf-8b91-4bfcf8e9866a")
+		bookingID := StringToUuid(t, "5a0977da-ac5d-4daf-8b91-4bfcf8e9866a")
 		got, err := repository.GetBookingById(bookingID)
 		if err != nil {
 			t.Errorf("Could get booking with id : %v", bookingID)
@@ -204,8 +204,8 @@ func TestBookingRepo(t *testing.T) {
 
 	t.Run("Test creating && deleting booking", func(t *testing.T) {
 		want := Booking{
-			RideID: stringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
-			UserID: stringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
+			RideID: StringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
+			UserID: StringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
 		}
 		got, err := repository.CreateBooking(want)
 
@@ -233,7 +233,7 @@ func TestBookingRepo(t *testing.T) {
 	})
 }
 
-func stringToUuid(t *testing.T, id string) uuid.UUID {
+func StringToUuid(t *testing.T, id string) uuid.UUID {
 	t.Helper()
 	res, err := uuid.Parse(id)
 	if err != nil {

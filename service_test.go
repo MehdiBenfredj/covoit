@@ -35,7 +35,7 @@ func TestUserService(t *testing.T) {
 	})
 	t.Run("test get user by email", func(t *testing.T) {
 		want := User{
-			UserID:    stringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"),
+			UserID:    StringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"),
 			FirstName: "Mehdi",
 			LastName:  "BENFREDJ",
 			Email:     "mehdibenfredj3@gmail.com",
@@ -51,12 +51,12 @@ func TestUserService(t *testing.T) {
 	})
 	t.Run("test get user by id", func(t *testing.T) {
 		want := User{
-			UserID:    stringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"),
+			UserID:    StringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"),
 			FirstName: "Mehdi",
 			LastName:  "BENFREDJ",
 			Email:     "mehdibenfredj3@gmail.com",
 		}
-		got, err := s.GetUserById(stringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"))
+		got, err := s.GetUserById(StringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"))
 		if err != nil {
 			t.Errorf("could not get user %s, err %s", "652c99d0-39a5-4797-97a6-09eba33f2bd7", err)
 		}
@@ -80,7 +80,7 @@ func TestUserService(t *testing.T) {
 			t.Errorf("created : %v, want : %v", user, u)
 		}
 
-		err = s.DeleteUser(stringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"))
+		err = s.DeleteUser(StringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"))
 		if err != nil || len(db.Users) != 2 {
 			fmt.Printf("%d", len(db.Users))
 			t.Errorf("could not delete user %s, err : %s", "652c99d0-39a5-4797-97a6-09eba33f2bd7", err)
@@ -106,11 +106,11 @@ func TestRideService(t *testing.T) {
 	})
 	t.Run("test get ride by id", func(t *testing.T) {
 		want := Ride{
-			RideID:      stringToUuid(t, "630cbfed-d023-41a4-884c-b1b1de76fb9f"),
+			RideID:      StringToUuid(t, "630cbfed-d023-41a4-884c-b1b1de76fb9f"),
 			Origin:      "Constantine",
 			Destination: "Alger",
 		}
-		got, err := s.GetRideById(stringToUuid(t, "630cbfed-d023-41a4-884c-b1b1de76fb9f"))
+		got, err := s.GetRideById(StringToUuid(t, "630cbfed-d023-41a4-884c-b1b1de76fb9f"))
 		if err != nil {
 			t.Errorf("could not get ride %s, err %s", "630cbfed-d023-41a4-884c-b1b1de76fb9f", err)
 		}
@@ -133,7 +133,7 @@ func TestRideService(t *testing.T) {
 			t.Errorf("created : %v, want : %v", ride, r)
 		}
 
-		err = s.DeleteRide(stringToUuid(t, "ef5e1eda-e5e0-4f90-81ac-110b0bf84281"))
+		err = s.DeleteRide(StringToUuid(t, "ef5e1eda-e5e0-4f90-81ac-110b0bf84281"))
 		if err != nil || len(db.Rides) != 2 {
 			fmt.Printf("%d", len(db.Rides))
 			t.Errorf("could not delete ride %s, err : %s", "ef5e1eda-e5e0-4f90-81ac-110b0bf84281", err)
@@ -159,11 +159,11 @@ func TestBookingService(t *testing.T) {
 	})
 	t.Run("test get booking by id", func(t *testing.T) {
 		want := Booking{
-			BookingID: stringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"),
-			RideID:    stringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
-			UserID:    stringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
+			BookingID: StringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"),
+			RideID:    StringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
+			UserID:    StringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
 		}
-		got, err := s.GetBookingById(stringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"))
+		got, err := s.GetBookingById(StringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"))
 		if err != nil {
 			t.Errorf("could not get booking %s, err %s", "ac925d60-1455-4d17-baeb-c4ffd4ed8205", err)
 		}
@@ -174,8 +174,8 @@ func TestBookingService(t *testing.T) {
 	})
 	t.Run("test create & delete  booking", func(t *testing.T) {
 		b := Booking{
-			RideID: stringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
-			UserID: stringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
+			RideID: StringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
+			UserID: StringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998"),
 		}
 		booking, err := s.CreateBooking(b)
 		if err != nil || len(db.Bookings) != 2 {
@@ -186,7 +186,7 @@ func TestBookingService(t *testing.T) {
 			t.Errorf("created : %v, want : %v", booking, b)
 		}
 
-		err = s.DeleteBooking(stringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"))
+		err = s.DeleteBooking(StringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"))
 		if err != nil || len(db.Bookings) != 1 {
 			fmt.Printf("%d", len(db.Bookings))
 			t.Errorf("could not delete booking %s, err : %s", "ac925d60-1455-4d17-baeb-c4ffd4ed8205", err)
@@ -210,13 +210,13 @@ func CreateNewMockDB(t *testing.T) *MockDB {
 	return &MockDB{
 		Users: []User{
 			User{
-				UserID:    stringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"),
+				UserID:    StringToUuid(t, "652c99d0-39a5-4797-97a6-09eba33f2bd7"),
 				FirstName: "Mehdi",
 				LastName:  "BENFREDJ",
 				Email:     "mehdibenfredj3@gmail.com",
 			},
 			User{
-				UserID:    stringToUuid(t, "90ed9f80-d22f-482a-8194-ec04cfeedcb2"),
+				UserID:    StringToUuid(t, "90ed9f80-d22f-482a-8194-ec04cfeedcb2"),
 				FirstName: "Faten",
 				LastName:  "Sayeh",
 				Email:     "sayehfaten1195@gmail.com",
@@ -224,19 +224,19 @@ func CreateNewMockDB(t *testing.T) *MockDB {
 		},
 		Rides: []Ride{
 			Ride{
-				RideID:      stringToUuid(t, "630cbfed-d023-41a4-884c-b1b1de76fb9f"),
+				RideID:      StringToUuid(t, "630cbfed-d023-41a4-884c-b1b1de76fb9f"),
 				Origin:      "Constantine",
 				Destination: "Alger"},
 			Ride{
-				RideID:      stringToUuid(t, "ef5e1eda-e5e0-4f90-81ac-110b0bf84281"),
+				RideID:      StringToUuid(t, "ef5e1eda-e5e0-4f90-81ac-110b0bf84281"),
 				Origin:      "Marseille",
 				Destination: "Paris"},
 		},
 		Bookings: []Booking{
 			Booking{
-				BookingID: stringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"),
-				RideID:    stringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
-				UserID:    stringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998")}},
+				BookingID: StringToUuid(t, "ac925d60-1455-4d17-baeb-c4ffd4ed8205"),
+				RideID:    StringToUuid(t, "46f45ea1-3f50-45cb-8556-797fe2688566"),
+				UserID:    StringToUuid(t, "3c05d41e-344c-4661-a5fd-63e7a0a46998")}},
 	}
 }
 
